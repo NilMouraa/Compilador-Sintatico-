@@ -1,0 +1,60 @@
+Para implementar um analisador sintático para o compilador da Linguagem L', a seguinte gramática serve como guia. 
+
+O objetivo de um analisador sintático é reunir os tokens de maneira que façam sentido dentro da linguagem. Um código válido em sua estrutura léxica e em sua estrutura sintática é executável, embora ainda possa oferecer dificuldades e ambiguidades, como erros de lógica de programação, condições inalcançáveis, etc. 
+
+Lembra-se das GLC? No caso da gramática abaixo, algumas regras são implícitas e portanto não estão disponíveis. É o caso das regras de formação de identificador.
+
+programa -> comandos fim
+
+comandos -> comando newline comandos
+
+comando -> se condicao então comandos fim-se
+| se condicao então comandos senão comandos fim-se
+| enquanto condicao faça comandos fim-enquanto
+| para id de num até num faça comandos fim-para
+| id = condicao
+| vetor = condicao
+| funcao id(params) comandos fim-funcao
+| declvetor
+
+condicao -> condicao e expressao
+| condicao ou expressao
+| condicao == expressao
+| condicao != expressao
+| condicao < expressao
+| condicao <= expressao | condicao =< expressao
+| condicao > expressao
+| condicao >= expressao | condicao => expressao
+| expressao
+
+expressao -> expressao + expressaoprec 
+| expressao - expressaoprec 
+| expressaoprec
+
+expressaoprec -> expressaoprec * termo 
+| expressaoprec x termo 
+| expressaoprec : termo 
+| expressaoprec / termo 
+| termo
+
+termo -> (condicao) 
+| id 
+| vetor 
+| decimal 
+| numero 
+| verdadeiro 
+| falso 
+| id(params)
+| "texto"
+
+vetor -> id[condicao] 
+| id[condicao][condicao]
+
+decimal -> numero,numero 
+| numero.numero
+
+params -> condicao 
+| condicao , params
+
+declvetor -> vetor id[num]
+| vetor id[num][num]
