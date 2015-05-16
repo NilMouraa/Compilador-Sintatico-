@@ -409,7 +409,7 @@ public class AnalisadorLexico {
             tokens.put(line, tokenLine);
             line++;
         }
-        imprimeResul();
+        //imprimeResul();
         return tokens;
     }
 
