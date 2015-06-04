@@ -1,9 +1,3 @@
-Para implementar um analisador sintático para o compilador da Linguagem L', a seguinte gramática serve como guia. 
-
-O objetivo de um analisador sintático é reunir os tokens de maneira que façam sentido dentro da linguagem. Um código válido em sua estrutura léxica e em sua estrutura sintática é executável, embora ainda possa oferecer dificuldades e ambiguidades, como erros de lógica de programação, condições inalcançáveis, etc. 
-
-Lembra-se das GLC? No caso da gramática abaixo, algumas regras são implícitas e portanto não estão disponíveis. É o caso das regras de formação de identificador.
-
 programa -> comandos fim
 
 comandos -> comando newline comandos

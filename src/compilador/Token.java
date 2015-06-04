@@ -13,10 +13,12 @@ public class Token {
 
     String tipo;
     String valor;
+    private int linha;
 
-    public Token(String tipo, String valor) {
+    public Token(String tipo, String valor, int linha) {
         this.tipo = tipo;
         this.valor = valor;
+        this.linha = linha;
     }
 
 //    public token(){
@@ -42,6 +44,20 @@ public class Token {
     public String toString() {
 //        return "<" + tipo + " " + valor + ">";
         return "<" + " " + tipo + " , " + valor + " >";
+    }
+
+    /**
+     * @return the linha
+     */
+    public int getLinha() {
+        return linha;
+    }
+
+    /**
+     * @param linha the linha to set
+     */
+    public void setLinha(int linha) {
+        this.linha = linha;
     }
 
 }

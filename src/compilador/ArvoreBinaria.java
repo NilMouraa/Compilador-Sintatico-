@@ -19,6 +19,10 @@ public class ArvoreBinaria<T> implements Serializable {
         nodo = node;
     }
 
+    public ArvoreBinaria() {
+    }
+    
+
     public void setNodo(T x) {
         nodo = x;
     }

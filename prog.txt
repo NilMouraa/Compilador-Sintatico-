@@ -1,4 +1,7 @@
-#Comentário: Início do código de exemplo#
+se (d >= 20) e (d =< 60) então a=1 b=1
+   tela.mensagem4 = "D está entre 20 e 60"
+fim-se
+#Comentário: Início do código de exemplo
 a = 5 x 3,2
 b = (8 + 7) x 4,1
 c = 91 - 3 * 2.4
@@ -13,7 +16,7 @@ aior que 10"
 fim-se
 
 se b < 30 então
-   tela.mensagem2 = "B é #menor que# 30"
+   tela.mensagem2 = "B é menor que 30"
 fim-se
 
 se (c <= 40) então
@@ -31,7 +34,7 @@ se (e =< 30,5) e (e != 20) então
    senão
    se (e < 0) então 
      tela.mensagem5 = "E é negativo"
-     apaga(tela.mensagem, telamensagem2, telamensagem3, telamensagem4)
+     apaga(tela.mensagem, telamensagem2, telamensagem3, telamensagem4) fim-função
    fim-se
    fim-se
 fim-se
@@ -43,7 +46,7 @@ fim-para
 tela = "10! = " + fat
 
 fat = 1
-i = 1
+i = 
 enquanto i <= 5 faça
     fat = fat x i
     i = i + 1
@@ -56,5 +59,6 @@ m[1][1] = 1.5
 m[1][2] = 3.2
 m[2][1] = 3,3
 m[2][i] = 2,9
-
+#
 fim
+a=1
