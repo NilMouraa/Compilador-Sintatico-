@@ -128,7 +128,7 @@ public class AnalisadorSintatico {
                     i++;
                 }
                 if(cmd.get(i).tipo.equals("endline")){
-                    salvarErros("Erro: Estrutura Condicional Mal Formada! (Faltou 'então')", cmd.get(i-1).getLinha());
+                    salvarErros("Erro: Estrutura Condicional 'if' Mal Formada! (Faltou 'então')", cmd.get(i-1).getLinha());
                 }
                 condicao(auxCondicao);
                 auxCondicao.clear();
@@ -158,14 +158,14 @@ public class AnalisadorSintatico {
                     i++;
                 }
                 if(!processos.isEmpty()){
-                    salvarErros("Erro: Estrutura Condicional Mal Formada! (Faltou fechamento "+processos.peek().getValor()+")", processos.peek().getLinha());
+                    salvarErros("Erro: Estrutura Condicional 'if' Mal Formada! (Faltou fechamento "+processos.peek().getValor()+")", processos.peek().getLinha());
                 }
                 processos.clear();
                 comandos(auxComandos);
                 auxComandos.clear();
                 
             } 
-//            enquanto condicao faça comandos fim-enquanto
+//| enenquanto condicao faça comandos fim-enquanto
             else if (cmd.get(i).tipo.equals("whileloop")) {
                 //verifica o fim whileloop e manda pra condicao() 
                 processos.clear();
@@ -177,7 +177,7 @@ public class AnalisadorSintatico {
                    i++;
                 }
                 if(cmd.get(i).tipo.equals("endline")){
-                    salvarErros("Erro: Estrutura de Repetição Mal Formada! (Faltou 'Faça')", cmd.get(i-1).getLinha());
+                    salvarErros("Erro: Estrutura de Repetição 'While' Mal Formada! (Faltou 'Faça')", cmd.get(i-1).getLinha());
                 }
                 
                 condicao(aux);
@@ -202,18 +202,95 @@ public class AnalisadorSintatico {
                     i++;
                 }
                 if (!processos.isEmpty()) {
-                    salvarErros("Erro: Estrutura de Repetição Mal Formada! (Faltou fechamento "+processos.peek().getValor()+")", processos.peek().getLinha());
+                    salvarErros("Erro: Estrutura de Repetição 'While' Mal Formada! (Faltou fechamento "+processos.peek().getValor()+")", processos.peek().getLinha());
                 }
                 
                 comandos(cmd);
                 cmd.clear();
                 
-                
-                
-            } else if (cmd.get(i).tipo.equals("forloop")) {
+            } 
+            //| para id de num até num faça comandos fim-para
+            else if (cmd.get(i).tipo.equals("forloop")) {
                 //verifica o fim forloop e manda pra condicao() 
-            } else if (cmd.get(i).tipo.equals("id")) {
+                processos.clear();
+                processos.push(cmd.get(i));
+                i++;
+                
+                if(i < cmd.size() || !(cmd.get(i).tipo.equals("id"))){
+                    salvarErros("Erro: Estrutura de Repetição 'For' Mal Formada! (Faltou 'id')", cmd.get(i-1).getLinha());
+                }
+                else{
+                    i++;
+                    if((i) >= cmd.size() || !cmd.get(i).tipo.equals("rng1forloop")){
+                        salvarErros("Erro: Estrutura de Repetição 'For' Mal Formada! (Faltou 'de')", cmd.get(i-1).getLinha());
+                    }
+                    else{
+                        i++;
+                        if ((i) >= cmd.size() || !(cmd.get(i).tipo.equals("int"))) {
+                            salvarErros("Erro: Estrutura de Repetição 'For' Mal Formada! (Faltou inteiro após 'de')", cmd.get(i-1).getLinha());
+                        }
+                        else{
+                            i++;
+                            if ((i) >= cmd.size() || !(cmd.get(i).tipo.equals("rng2forloop"))) {
+                                salvarErros("Erro: Estrutura de Repetição 'For' Mal Formada! (Faltou 'até')", cmd.get(i-1).getLinha());
+                            }
+                            else{
+                                i++;
+                                if ((i) >= cmd.size() || !(cmd.get(i).tipo.equals("int"))) {
+                                    salvarErros("Erro: Estrutura de Repetição 'For' Mal Formada! (Faltou inteiro após 'até')", cmd.get(i-1).getLinha());
+                                }
+                                else{
+                                    i++;
+                                    if ((i) >= cmd.size() || !(cmd.get(i).tipo.equals("initforloop"))) {
+                                        salvarErros("Erro: Estrutura de Repetição 'For' Mal Formada! (Faltou 'faça')", cmd.get(i-1).getLinha());
+                                    }
+                                    else{
+                                        i++;
+                                        
+                                        while(i < cmd.size()){
+                                            if(cmd.get(i).tipo.equals("forloop")){
+                                                processos.push(cmd.get(i));
+                                            }
+                                            else if(cmd.get(i).tipo.equals("endforloop")){
+                                                processos.pop();
+                                                
+                                                if(processos.isEmpty()){
+                                                    if((i+1) < cmd.size() && !(cmd.get(i+1).tipo.equals("endline"))){
+                                                        salvarErros("Erro: Bloco Mal Formado! (Após Comando Deve Haver Quebra de Linha)", cmd.get(i).getLinha());
+                                                    }
+                                                    break;
+                                                }
+                                            }
+                                            aux.add(cmd.get(i));
+                                            i++;   
+                                        }
+                                        if(!processos.isEmpty()){
+                                            salvarErros("Erro: Estrutura de Repetição Mal Formada! (Faltou fechamento "+processos.peek().getValor()+")", processos.peek().getLinha());
+                                        }
+                                        processos.clear();
+                                        comandos(aux);
+                                        aux.clear();
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            } 
+            //| id = condicao
+            else if (cmd.get(i).tipo.equals("id")) {
                 // manda pra condicao() o que esta depois do token equal
+                i++;
+                if ((i) < cmd.size() && cmd.get(i).tipo.equals("[")) {
+                    i++;
+                    while (i < cmd.size() && !(cmd.get(i).tipo.equals("endline")) && !(cmd.get(i).tipo.equals("]"))) {
+                        aux.add(cmd.get(i));
+                        i++;
+                    }
+                    if(i >= cmd.size() || cmd.get(i).tipo.equals("endline")){
+                        
+                    }
+                }
             } else if (cmd.get(i).tipo.equals("vetor")) {
                 //manda pra condicao() o que esta depois do token vector
             } else if (cmd.get(i).tipo.equals("func")) {
