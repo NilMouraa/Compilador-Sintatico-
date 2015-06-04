@@ -281,6 +281,7 @@ public class AnalisadorSintatico {
             else if (cmd.get(i).tipo.equals("id")) {
                 // manda pra condicao() o que esta depois do token equal
                 i++;
+                //Verifica se é vetor
                 if ((i) < cmd.size() && cmd.get(i).tipo.equals("[")) {
                     i++;
                     while (i < cmd.size() && !(cmd.get(i).tipo.equals("endline")) && !(cmd.get(i).tipo.equals("]"))) {
@@ -288,6 +289,31 @@ public class AnalisadorSintatico {
                         i++;
                     }
                     if(i >= cmd.size() || cmd.get(i).tipo.equals("endline")){
+                        salvarErros("Erro: Estrutura Vetorial Mal Formada! (Faltou fechamento com ']')", cmd.get(i-1).getLinha());
+                    }
+                    condicao(aux);
+                    aux.clear();
+                    
+                    i++;
+                    
+                    if (i < cmd.size() && cmd.get(i).tipo.equals("[")) {
+                        i++;
+                        
+                        while ((i < cmd.size()) && !(cmd.get(i).tipo.equals("endline")) && !(cmd.get(i).tipo.equals("]"))) {
+                            aux.add(cmd.get(i));
+                            i++;
+                        }
+                        
+                        if (i >= cmd.size() || cmd.get(i).getTipo().equals("endline")) {
+                            salvarErros("Erro: Estrutura Vetorial Mal Formada! (Faltou fechamento com ']')", cmd.get(i-1).getLinha());
+                        }
+                        condicao(aux);
+                        aux.clear();
+                        i++;
+                    }
+                }
+                if (i >= cmd.size() || !(cmd.get(i).tipo.equals("atrib"))) {
+                    if (cmd.get(i).tipo.equals("endline")) {
                         
                     }
                 }
