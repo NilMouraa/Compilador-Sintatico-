@@ -94,8 +94,8 @@ public class AnalisadorSintatico {
     }
     
 //comandos -> se condicao então comandos fim-se
-//| se condicao então comandos senão comandos fim-se
-//| enquanto condicao faça comandos fim-enquanto
+//| secondicao então comandos senão comandos fim-se
+//| enenquanto condicao faça comandos fim-enquanto
 //| para id de num até num faça comandos fim-para
 //| id = condicao
 //| vetor = condicao
@@ -163,9 +163,53 @@ public class AnalisadorSintatico {
                 processos.clear();
                 comandos(auxComandos);
                 auxComandos.clear();
-
-            } else if (cmd.get(i).tipo.equals("whileloop")) {
+                
+            } 
+//            enquanto condicao faça comandos fim-enquanto
+            else if (cmd.get(i).tipo.equals("whileloop")) {
                 //verifica o fim whileloop e manda pra condicao() 
+                processos.clear();
+                processos.push(cmd.get(i));
+                i++;
+                  
+                while(i < cmd.size() && !(cmd.get(i).tipo.equals("initforloop")) && !(cmd.get(i).tipo.equals("endline"))){
+                   aux.add(cmd.get(i));
+                   i++;
+                }
+                if(cmd.get(i).tipo.equals("endline")){
+                    salvarErros("Erro: Estrutura de Repetição Mal Formada! (Faltou 'Faça')", cmd.get(i-1).getLinha());
+                }
+                
+                condicao(aux);
+                aux.clear();
+                
+                i++;
+                
+                while (i < cmd.size()) {
+                    if (cmd.get(i).tipo.equals("whileloop")) {
+                        processos.push(cmd.get(i));
+                    } else if (cmd.get(i).getTipo().equals("endwhileloop")) {
+                        processos.pop();
+                        if (processos.isEmpty()) {
+                            if ((i + 1) < cmd.size() && !cmd.get(i + 1).getTipo().equals("endline")) {
+                                salvarErros("Erro: Bloco Mal Formado! (Após Comando Deve Haver Quebra de Linha", cmd.get(i).getLinha());
+
+                            }
+                            break;
+                        }
+                    }
+                    auxComandos.add(cmd.get(i));
+                    i++;
+                }
+                if (!processos.isEmpty()) {
+                    salvarErros("Erro: Estrutura de Repetição Mal Formada! (Faltou fechamento "+processos.peek().getValor()+")", processos.peek().getLinha());
+                }
+                
+                comandos(cmd);
+                cmd.clear();
+                
+                
+                
             } else if (cmd.get(i).tipo.equals("forloop")) {
                 //verifica o fim forloop e manda pra condicao() 
             } else if (cmd.get(i).tipo.equals("id")) {
@@ -178,7 +222,7 @@ public class AnalisadorSintatico {
         }
     }
 
-    void condicao(ArrayList<Token> condicao) {
+    void condicao(ArrayList<Token> cond) {
 
     }
 
