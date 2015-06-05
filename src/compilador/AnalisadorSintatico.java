@@ -51,12 +51,12 @@ public class AnalisadorSintatico {
             Integer key = entrySet.getKey();
             ArrayList<Token> value = entrySet.getValue();
             for (Token aux : value) {
-                if (aux.getTipo().equals("endprog")) {
+                if (aux.tipo.equals("endprog")) {
 
                     Eprograma = true;
                     comandos(auxComandos);
 
-                } else if (!aux.getTipo().equals("endline") && Eprograma) {
+                } else if (!aux.tipo.equals("endline") && Eprograma) {
                     salvarErros("Erro: Token(s) após Token 'Fim'",key);
                     break voltar;
                 } else {
@@ -188,10 +188,10 @@ public class AnalisadorSintatico {
                 while (i < cmd.size()) {
                     if (cmd.get(i).tipo.equals("whileloop")) {
                         processos.push(cmd.get(i));
-                    } else if (cmd.get(i).getTipo().equals("endwhileloop")) {
+                    } else if (cmd.get(i).tipo.equals("endwhileloop")) {
                         processos.pop();
                         if (processos.isEmpty()) {
-                            if ((i + 1) < cmd.size() && !cmd.get(i + 1).getTipo().equals("endline")) {
+                            if ((i + 1) < cmd.size() && !cmd.get(i+1).tipo.equals("endline")) {
                                 salvarErros("Erro: Bloco Mal Formado! (Após Comando Deve Haver Quebra de Linha", cmd.get(i).getLinha());
 
                             }
@@ -304,8 +304,8 @@ public class AnalisadorSintatico {
                             i++;
                         }
                         
-                        if (i >= cmd.size() || cmd.get(i).getTipo().equals("endline")) {
-                            salvarErros("Erro: Estrutura Vetorial Mal Formada! (Faltou fechamento com ']')", cmd.get(i-1).getLinha());
+                        if (i >= cmd.size() || cmd.get(i).tipo.equals("endline")) {
+                            salvarErros("Erro: Estrutura Matricial Mal Formada! (Faltou fechamento com ']')", cmd.get(i-1).getLinha());
                         }
                         condicao(aux);
                         aux.clear();
@@ -314,14 +314,79 @@ public class AnalisadorSintatico {
                 }
                 if (i >= cmd.size() || !(cmd.get(i).tipo.equals("atrib"))) {
                     if (cmd.get(i).tipo.equals("endline")) {
-                        
+                        salvarErros("Erro: Estrutura Mal Formada! (Faltou Operador de atribuição '=')", cmd.get(i-1).getLinha());
+                    }
+                    else{
+                        salvarErros("Erro: Token ' " + cmd.get(i).getValor() + " ' inválido! ", cmd.get(i).getLinha());
                     }
                 }
-            } else if (cmd.get(i).tipo.equals("vetor")) {
-                //manda pra condicao() o que esta depois do token vector
-            } else if (cmd.get(i).tipo.equals("func")) {
-                //manda os parametros para param, comandos para comandos  até encontrar fimFunçao
+                else{
+                    i++;
+                    while (i < cmd.size() && !(cmd.get(i).tipo.equals("endline"))) {
+                        aux.add(cmd.get(i));
+                        i++;
+                    }
+                    condicao(aux);
+                    aux.clear();
+                }
+                
+            } 
+            
+            //| funcao id(params) comandos fim-funcao
+            else if (cmd.get(i).tipo.equals("func")) {
+                
             }
+            //| vetor = condicao
+            else if (cmd.get(i).tipo.equals("vetor")) {
+                //manda pra condicao() o que esta depois do token vector
+                i++;
+                if (i < cmd.size() && cmd.get(i).tipo.equals("id")) {
+                    i++;
+                    if (i < cmd.size() && cmd.get(i).tipo.equals("[")) {
+                        if (i >= cmd.size() || !(cmd.get(i).tipo.equals("int"))) {
+                            salvarErros("Erro: Estrutura Vetorial Mal Formada! (Esperava [<int>])", cmd.get(i - 1).getLinha());
+                        } else {
+                            i++;
+                            if (i >= cmd.size() || !(cmd.get(i).tipo.equals("]"))) {
+                                salvarErros("Erro: Estrutura Vetorial Mal Formada! (Faltou fechamento com ']')", cmd.get(i - 1).getLinha());
+                            } else {
+                                i++;
+                                if (i < cmd.size() && cmd.get(i).tipo.equals("[")) {
+                                    i++;
+                                    if (i >= cmd.size() || !(cmd.get(i).tipo.equals("int"))) {
+                                        salvarErros("Erro: Estrutura Matricial Mal Formada! (Esperava [<int>][<int>])", cmd.get(i - 1).getLinha());
+                                    } else {
+                                        i++;
+                                        if (i >= cmd.size() || !(cmd.get(i).tipo.equals("]"))) {
+                                            salvarErros("Erro: Estrutura Matricial Mal Formada! (Faltou fechamento com ']')", cmd.get(i - 1).getLinha());
+                                        } else {
+                                            i++;
+                                            if (i >= cmd.size() || !(cmd.get(i).tipo.equals("endline"))) {
+                                                salvarErros("Erro: Estrutura Mal Formada! (Após Comando Deve Haver Quebra de Linha)", cmd.get(i).getLinha());
+                                            }
+                                        }
+                                    }
+                                } else if (i >= cmd.size() || !(cmd.get(i).tipo.equals("endline"))) {
+                                    salvarErros("Erro: Estrutura Mal Formada! (Após Comando Deve Haver Quebra de Linha)", cmd.get(i).getLinha());
+                                }
+
+                            }
+                        }
+                    }
+                    else {
+                        salvarErros("Erro: Estrutura Vetorial Mal Formada! (Esperava [<int>])", cmd.get(i - 1).getLinha());
+                    }
+                }
+                else{
+                    salvarErros("Erro: Estrutura Mal Formada! (Esperava 'id' do Vetor)", cmd.get(i-1).getLinha());
+                }
+            } 
+            else {
+                if(!(cmd.get(i).tipo.equals("endline"))){
+                    salvarErros("Erro: Token ' " + cmd.get(i).getValor() + " ' inválido! ", cmd.get(i).getLinha());
+                }
+            }
+            
         }
     }
 
